@@ -94,7 +94,9 @@ form.addEventListener('submit', function (e) {
   // grab lat and lng from mapEvent.latlng
   const { lat, lng } = mapEvent.latlng;
   //use [lat, lng] instead of coords
-  L.marker([lat, lng])
+  L.marker([lat, lng], {
+    riseOnHover: true,
+  })
     .addTo(map)
     .bindPopup(
       //See Leaflet docs for options
