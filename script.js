@@ -35,6 +35,7 @@ if (navigator.geolocation)
 
       //second argument is how much zoom you want
       const map = L.map('map').setView(coords, 12);
+      //   console.log(map);
 
       //For openstreetmap:
       //   L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
@@ -48,10 +49,26 @@ if (navigator.geolocation)
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
       }).addTo(map);
 
-      L.marker(coords)
-        .addTo(map)
-        .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-        .openPopup();
+      map.on('click', function (mapEvent) {
+        console.log(mapEvent);
+        //grab lat and lng from mapEvent.latlng
+        const { lat, lng } = mapEvent.latlng;
+        //use [lat, lng] instead of coords
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(
+            //See Leaflet docs for options
+            L.popup({
+              maxWidth: 250,
+              minWidth: 100,
+              autoClose: false,
+              closeOnClick: false,
+              className: 'running-popup',
+            })
+          )
+          .setPopupContent('Workout')
+          .openPopup();
+      });
     },
     function () {
       alert('Could not get your position');
