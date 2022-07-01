@@ -11,6 +11,7 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
+let map, mapEvent;
 //getCurrentPosition takes two callback functions: the first is the function that will be called to get the users coordinates (user selects 'allow'), the second will be called if there is an error (user selects 'block')
 if (navigator.geolocation)
   //to get pop-up window asking for location
@@ -34,7 +35,7 @@ if (navigator.geolocation)
       const coords = [latitude, longitude];
 
       //second argument is how much zoom you want
-      const map = L.map('map').setView(coords, 12);
+      map = L.map('map').setView(coords, 12);
       //   console.log(map);
 
       //For openstreetmap:
@@ -49,28 +50,67 @@ if (navigator.geolocation)
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
       }).addTo(map);
 
-      map.on('click', function (mapEvent) {
+      //Handling clicks on map
+      map.on('click', function (mapE) {
+        mapEvent = mapE;
+        form.classList.remove('hidden');
+        inputDistance.focus(); //focuses on distance
+
         console.log(mapEvent);
         //grab lat and lng from mapEvent.latlng
-        const { lat, lng } = mapEvent.latlng;
-        //use [lat, lng] instead of coords
-        L.marker([lat, lng])
-          .addTo(map)
-          .bindPopup(
-            //See Leaflet docs for options
-            L.popup({
-              maxWidth: 250,
-              minWidth: 100,
-              autoClose: false,
-              closeOnClick: false,
-              className: 'running-popup',
-            })
-          )
-          .setPopupContent('Workout')
-          .openPopup();
+        // const { lat, lng } = mapEvent.latlng;
+        // //use [lat, lng] instead of coords
+        // L.marker([lat, lng])
+        //   .addTo(map)
+        //   .bindPopup(
+        //     //See Leaflet docs for options
+        //     L.popup({
+        //       maxWidth: 250,
+        //       minWidth: 100,
+        //       autoClose: false,
+        //       closeOnClick: false,
+        //       className: 'running-popup',
+        //     })
+        //   )
+        //   .setPopupContent('Workout')
+        //   .openPopup();
       });
     },
     function () {
       alert('Could not get your position');
     }
   );
+
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  //Clear input fields:
+  inputDistance.value =
+    inputDuration.value =
+    inputCadence.value =
+    inputElevation.value =
+      '';
+  // Display the marker
+  // grab lat and lng from mapEvent.latlng
+  const { lat, lng } = mapEvent.latlng;
+  //use [lat, lng] instead of coords
+  L.marker([lat, lng])
+    .addTo(map)
+    .bindPopup(
+      //See Leaflet docs for options
+      L.popup({
+        maxWidth: 250,
+        minWidth: 100,
+        autoClose: false,
+        closeOnClick: false,
+        className: 'running-popup',
+      })
+    )
+    .setPopupContent('Workout')
+    .openPopup();
+});
+
+inputType.addEventListener('change', function () {
+  inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
+  inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
+});
