@@ -15,7 +15,7 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 class Workout {
   date = new Date();
-  id = (Date.now() + '').slice(-10);
+  id = uuidv4(); //Unique ID from UUID CDN
 
   constructor(coords, distance, duration) {
     this.coords = coords; //Array of coordinates [lat, lng]
@@ -53,9 +53,9 @@ class Cycling extends Workout {
 }
 
 //Class Tests:
-// const run1 = new Running([39, -12], 5.2, 24, 178);
-// const cycling1 = new Cycling([39, -12], 27, 95, 523);
-// console.log(run1, cycling1);
+const run1 = new Running([39, -12], 5.2, 24, 178);
+const cycling1 = new Cycling([39, -12], 27, 95, 523);
+console.log(run1, cycling1);
 
 //Application Architecture:
 class App {
