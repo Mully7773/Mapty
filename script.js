@@ -25,6 +25,7 @@ class Workout {
 }
 
 class Running extends Workout {
+  type = 'running';
   constructor(coords, distance, duration, cadence) {
     super(coords, distance, duration);
     this.cadence = cadence;
@@ -39,6 +40,7 @@ class Running extends Workout {
 }
 
 class Cycling extends Workout {
+  type = 'cycling';
   constructor(coords, distance, duration, elevationGain) {
     super(coords, distance, duration);
     this.elevationGain = elevationGain;
@@ -61,6 +63,7 @@ console.log(run1, cycling1);
 class App {
   #map;
   #mapEvent;
+  #workouts = [];
   //constructor method is called immediately after a new object is created from the App class right when the page is loaded - instead of writing app._getPosition outside the class, we can do it like this in the constructor
   constructor() {
     this._getPosition();
@@ -146,6 +149,9 @@ class App {
     const type = inputType.value;
     const distance = +inputDistance.value;
     const duration = +inputDuration.value;
+    // grab lat and lng from mapEvent.latlng
+    const { lat, lng } = this.#mapEvent.latlng;
+    let workout;
 
     //If workout running, create running object
     if (type === 'running') {
@@ -160,6 +166,8 @@ class App {
         !allPositive(distance, duration, cadence)
       )
         return alert('Inputs have to be positive numbers!');
+
+      workout = new Running([lat, lng], distance, duration, cadence);
     }
     //If workout cycling, create cycling object
     if (type === 'cycling') {
@@ -171,31 +179,15 @@ class App {
         !allPositive(distance, duration)
       )
         return alert('Inputs have to be positive numbers!');
+
+      workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
     //Add new object to workout array
-
+    this.#workouts.push(workout);
+    console.log(workout);
     //Render workout on map as marker
-    // grab lat and lng from mapEvent.latlng
-    const { lat, lng } = this.#mapEvent.latlng;
-    //use [lat, lng] instead of coords
-    L.marker([lat, lng], {
-      riseOnHover: true,
-    })
-      .addTo(this.#map)
-      .bindPopup(
-        //See Leaflet docs for options
-        L.popup({
-          maxWidth: 250,
-          minWidth: 100,
-          autoClose: false,
-          closeOnClick: false,
-          className: 'running-popup',
-        })
-      )
-      .setPopupContent('Workout')
-      .openPopup();
-
+    this.renderWorkoutMarker(workout);
     //render workout on list
 
     //Hide the form and clear input fields
@@ -206,6 +198,25 @@ class App {
       inputCadence.value =
       inputElevation.value =
         '';
+  }
+
+  renderWorkoutMarker(workout) {
+    L.marker(workout.coords, {
+      riseOnHover: true,
+    })
+      .addTo(this.#map)
+      .bindPopup(
+        //See Leaflet docs for options
+        L.popup({
+          maxWidth: 250,
+          minWidth: 100,
+          autoClose: false,
+          closeOnClick: false,
+          className: `${workout.type}-popup`,
+        })
+      )
+      .setPopupContent('Workout')
+      .openPopup();
   }
 }
 
