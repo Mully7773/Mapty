@@ -136,15 +136,46 @@ class App {
   }
 
   _newWorkout(e) {
+    const validInputs = (...inputs) =>
+      inputs.every(inp => Number.isFinite(inp));
+    const allPositive = (...inputs) => inputs.every(inp => inp > 0);
+
     e.preventDefault();
 
-    //Clear input fields:
-    inputDistance.value =
-      inputDuration.value =
-      inputCadence.value =
-      inputElevation.value =
-        '';
-    // Display the marker
+    // Get data from the form
+    const type = inputType.value;
+    const distance = +inputDistance.value;
+    const duration = +inputDuration.value;
+
+    //If workout running, create running object
+    if (type === 'running') {
+      //Check if data is valid
+      const cadence = +inputCadence.value;
+      //Guard clause: check for the opposite of what we are interested in and if it's true, return immediately
+      if (
+        // !Number.isFinite(distance) ||
+        // !Number.isFinite(duration) ||
+        // !Number.isFinite(cadence)
+        !validInputs(distance, duration, cadence) ||
+        !allPositive(distance, duration, cadence)
+      )
+        return alert('Inputs have to be positive numbers!');
+    }
+    //If workout cycling, create cycling object
+    if (type === 'cycling') {
+      const elevation = +inputElevation.value;
+
+      if (
+        !validInputs(distance, duration, elevation) ||
+        //elevation could be negative
+        !allPositive(distance, duration)
+      )
+        return alert('Inputs have to be positive numbers!');
+    }
+
+    //Add new object to workout array
+
+    //Render workout on map as marker
     // grab lat and lng from mapEvent.latlng
     const { lat, lng } = this.#mapEvent.latlng;
     //use [lat, lng] instead of coords
@@ -164,6 +195,17 @@ class App {
       )
       .setPopupContent('Workout')
       .openPopup();
+
+    //render workout on list
+
+    //Hide the form and clear input fields
+
+    //Clear input fields:
+    inputDistance.value =
+      inputDuration.value =
+      inputCadence.value =
+      inputElevation.value =
+        '';
   }
 }
 
