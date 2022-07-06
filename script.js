@@ -13,6 +13,7 @@ const inputElevation = document.querySelector('.form__input--elevation');
 class Workout {
   date = new Date();
   id = uuidv4(); //Unique ID from UUID CDN
+  clicks = 0;
 
   constructor(coords, distance, duration) {
     this.coords = coords; //Array of coordinates [lat, lng]
@@ -27,6 +28,9 @@ class Workout {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
+  }
+  click() {
+    this.clicks++;
   }
 }
 
@@ -70,6 +74,7 @@ console.log(run1, cycling1);
 //Application Architecture:
 class App {
   #map;
+  #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
   //constructor method is called immediately after a new object is created from the App class right when the page is loaded - instead of writing app._getPosition outside the class, we can do it like this in the constructor
@@ -80,6 +85,8 @@ class App {
 
     //we don't need to bind() this callback function because we don't actually use the this keyword within the function - see _toggleElevationField
     inputType.addEventListener('change', this._toggleElevationField);
+
+    containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
   }
 
   _getPosition() {
@@ -114,7 +121,7 @@ class App {
     const coords = [latitude, longitude];
 
     //second argument is how much zoom you want
-    this.#map = L.map('map').setView(coords, 12);
+    this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
     //   console.log(map);
 
     //For openstreetmap:
@@ -282,6 +289,30 @@ class App {
     </li>`;
 
     form.insertAdjacentHTML('afterend', html);
+  }
+
+  _moveToPopup(e) {
+    //Can click anywhere on each individual workout to get ID
+    const workoutEl = e.target.closest('.workout');
+    console.log(workoutEl);
+
+    // Guard clause
+    if (!workoutEl) return;
+
+    const workout = this.#workouts.find(
+      work => work.id === workoutEl.dataset.id
+    );
+    console.log(workout);
+
+    this.#map.setView(workout.coords, this.#mapZoomLevel, {
+      animate: true,
+      pan: {
+        duration: 1,
+      },
+    });
+
+    //using the public interface:
+    workout.click();
   }
 }
 
