@@ -79,10 +79,15 @@ class App {
   #workouts = [];
   //constructor method is called immediately after a new object is created from the App class right when the page is loaded - instead of writing app._getPosition outside the class, we can do it like this in the constructor
   constructor() {
+    // Get users's position
     this._getPosition();
     //have to bind this because we need it to point to the class App object itself not to the form
-    form.addEventListener('submit', this._newWorkout.bind(this));
 
+    // Get data from local storage
+    this._getLocalStorage();
+
+    // Attach event handlers
+    form.addEventListener('submit', this._newWorkout.bind(this));
     //we don't need to bind() this callback function because we don't actually use the this keyword within the function - see _toggleElevationField
     inputType.addEventListener('change', this._toggleElevationField);
 
@@ -138,6 +143,10 @@ class App {
 
     //Handling clicks on map
     this.#map.on('click', this._showForm.bind(this));
+
+    this.#workouts.forEach(work => {
+      this._renderWorkoutMarker(work);
+    });
   }
 
   _showForm(mapE) {
@@ -220,6 +229,9 @@ class App {
     //Hide the form and clear input fields
     //Clear input fields:
     this._hideForm();
+
+    //Set local storage to all workouts
+    this._setLocalStorage();
   }
 
   _renderWorkoutMarker(workout) {
@@ -312,7 +324,30 @@ class App {
     });
 
     //using the public interface:
-    workout.click();
+    // workout.click();
+  }
+
+  _setLocalStorage() {
+    // first argument is a key, second is value (which is also a string -- use JSON.stringify to convert an object to a string)
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+  }
+
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts'));
+    console.log(data);
+
+    if (!data) return;
+
+    //Setting the workouts array to data
+    this.#workouts = data;
+
+    this.#workouts.forEach(work => {
+      this._renderWorkout(work);
+    });
+  }
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
   }
 }
 
