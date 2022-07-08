@@ -5,7 +5,7 @@
 
 ## Link:
 
-Check it out here:
+Check it out here: https://mully7773.github.io/Mapty/
 
 ## Description
 
@@ -16,9 +16,9 @@ This project helped solidify my understanding of OOP and vanilla JavaScript. For
 
 ## Screenshots
 
-![Screenshot of homepage](./screenshots/2022-07-08.png)
+![Screenshot of map with two workouts zoomed-in](./screenshots/2022-07-08.png)
 
-![Screenshot of homepage section 2](<./screenshots/2022-07-08%20(1).png>)
+![Screenshot of map with two workouts zoomed-out](<./screenshots/2022-07-08%20(1).png>)
 
 ## Functionality
 
