@@ -130,16 +130,16 @@ class App {
     //   console.log(map);
 
     //For openstreetmap:
-    //   L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-    //     attribution:
-    //       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    //   }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(this.#map);
 
     //For Google Maps:
-    L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-      maxZoom: 20,
-      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-    }).addTo(this.#map);
+    // L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+    //   maxZoom: 20,
+    //   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    // }).addTo(this.#map);
 
     //Handling clicks on map
     this.#map.on('click', this._showForm.bind(this));
@@ -150,6 +150,7 @@ class App {
   }
 
   _showForm(mapE) {
+    // mapEvent occurs whenever we click on the map
     this.#mapEvent = mapE;
     form.classList.remove('hidden');
     inputDistance.focus(); //focuses on distance
